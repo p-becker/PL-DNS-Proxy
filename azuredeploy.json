@@ -68,6 +68,12 @@
       "metadata": {
         "description": "SSH Key or password for the Virtual Machine. SSH key is recommended."
       }
+    },
+    "proxyAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The proxy address for both HTTP and HTTPS."
+      }
     }
   },
   "variables": {
@@ -168,8 +174,10 @@
                      "autoUpgradeMinorVersion": true,
                      "settings": {
 			     "fileUris": [
+				     "[concat(parameters('_artifactsLocation'), '/scripts/setup_proxy.sh')]",
 				     "[concat(parameters('_artifactsLocation'), '/scripts/automate_nginx.sh')]" 
-			     ]
+			     ],
+			     "commandToExecute": "[concat('./setup_proxy.sh ', parameters('proxyAdress'), ' && ./automate_nginx.sh')]"
                      }
                  }
                }

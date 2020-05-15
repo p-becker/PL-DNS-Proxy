@@ -1,21 +1,26 @@
 #!/bin/bash
 set -e
-proxy='http://185.46.212.91:80'
+proxy=$1
 
+if [[ -z "$proxy" ]]; then
+  echo "Usage: $0 proxyAdress"
+  exit 1
+fi
+
+customRcString='source ~/wpi_root.bashrc'
+# Append this line if it doesn't exist yet
+grep -qxF "$customRcString" ~/.bashrc || echo "$customRcString" >> ~/.bashrc
 sudo tee -a ~/.bashrc <<EOF
-source ~/wpi_root.bashrc
 EOF
 
-sudo tee -a ~/wpi_root.bashrc <<EOF
+sudo tee ~/wpi_root.bashrc <<EOF
 export HTTP_PROXY=$proxy
 export HTTPS_PROXY=$proxy
 EOF
 
-sudo tee -a /etc/apt/apt.conf.d/proxy.conf <<EOF
+sudo tee /etc/apt/apt.conf.d/proxy.conf <<EOF
 Acquire {
-	HTTP::proxy \"$proxy\";
-	HTTPS::proxy \"$proxy\";
+	HTTP::proxy "http://$proxy";
+	HTTPS::proxy "http://$proxy";
 }
 EOF
-
-source ~/.bashrc
